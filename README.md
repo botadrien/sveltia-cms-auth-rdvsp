@@ -2,6 +2,47 @@
 
 This simple [Cloudflare Workers](https://workers.cloudflare.com/) script allows [Sveltia CMS](https://sveltiacms.app/en/) users to authenticate with [GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps).
 
+---
+
+## Fork — RDV Service Public (aide en ligne)
+
+Fork quasi vanilla de [`sveltia/sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth),
+déployé pour le CMS de <https://github.com/botadrien/doc-rdv-service-public-eleventy>.
+
+- **Déployé sur** : `https://sveltia-cms-auth-rdvsp.adrien-076.workers.dev`
+- **Particularité** : utilisé avec une **GitHub App** (et non une OAuth App),
+  installée sur le seul dépôt `doc-rdv-service-public-eleventy` → le jeton
+  délivré à chaque éditeur est limité à ce dépôt. Le worker fonctionne tel quel
+  avec une GitHub App **à condition que « Expire user authorization tokens »
+  soit décoché** sur l'App (le worker ne gère pas le `refresh_token`).
+- **Procédure complète** (création de l'App, permissions, installation, variables) :
+  [`docs/cms-auth-github-app.md`](https://github.com/botadrien/doc-rdv-service-public-eleventy/blob/main/docs/cms-auth-github-app.md)
+  du dépôt principal.
+
+### Variables
+
+| Nom | Où | Valeur |
+|---|---|---|
+| `ALLOWED_DOMAINS` | `wrangler.toml` → `[vars]` | `botadrien.github.io` (→ `aide.rdv-service-public.fr` au cutover DNS) |
+| `GITHUB_CLIENT_ID` | secret (dashboard ou `wrangler secret put`) | Client ID de la GitHub App |
+| `GITHUB_CLIENT_SECRET` | secret | client secret de la GitHub App |
+
+### Déployer
+
+```sh
+pnpm install
+pnpm run deploy         # wrangler deploy
+# secrets (une fois) :
+wrangler secret put GITHUB_CLIENT_ID
+wrangler secret put GITHUB_CLIENT_SECRET
+```
+
+Les variables définies uniquement dans le dashboard Cloudflare peuvent être
+écrasées par `wrangler deploy` : garder `ALLOWED_DOMAINS` dans `wrangler.toml`
+et les deux `GITHUB_*` en secrets.
+
+---
+
 <!-- prettier-ignore-start -->
 > [!IMPORTANT]
 > **In most cases, you don’t need this authenticator**. Sveltia CMS supports multiple authentication methods for GitHub and GitLab, so you can choose the one that best suits your needs without having to set up this OAuth client.

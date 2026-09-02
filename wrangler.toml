@@ -1,3 +1,17 @@
 name = "sveltia-cms-auth-rdvsp"
 main = "src/index.js"
 compatibility_date = "2023-03-24"
+
+# Variables non sensibles (déployées par `wrangler deploy`).
+# Domaine(s) autorisés à utiliser l'authenticator : anti-abus + sécurité
+# (le worker ne délivre un jeton qu'à une page servie depuis un de ces hôtes).
+# Au cutover DNS, remplacer par : "aide.rdv-service-public.fr"
+# (plusieurs hôtes possibles : liste séparée par des virgules).
+[vars]
+ALLOWED_DOMAINS = "botadrien.github.io"
+
+# Secrets — NE PAS mettre ici. À définir via le dashboard Cloudflare
+# (Settings > Variables and Secrets) ou :
+#   wrangler secret put GITHUB_CLIENT_ID
+#   wrangler secret put GITHUB_CLIENT_SECRET
+# (valeurs = Client ID / client secret de la GitHub App, cf. README).
